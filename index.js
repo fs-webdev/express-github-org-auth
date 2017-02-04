@@ -1,4 +1,5 @@
 /**
+ * (Forked by Jakob Anderson of FamilySearch)
  * Copyright (C) 2015 Swift Navigation Inc.
  * Contact: Joshua Gross <josh@swift-nav.com>
  * License: MIT
@@ -51,7 +52,7 @@ function installAuth (host, requiredOrg, app) {
   var strategyConfig = {
     clientID: process.env["GITHUB_CLIENT_ID"],
     clientSecret: process.env["GITHUB_CLIENT_SECRET"],
-    callbackURL: "http://" + host + "/auth/github/callback",
+    callbackURL: host + "/auth/github/callback",
     scope: ["read:org", "read:user"]
   };
   passport.use(new GitHubStrategy(strategyConfig, function(accessToken, refreshToken, profile, done) {
