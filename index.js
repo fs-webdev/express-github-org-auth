@@ -21,11 +21,10 @@ var GitHubStrategy = require('passport-github').Strategy;
 var lazyUserDict = {};
 
 /**
- * @param host should be of the format: 'localhost:8000' (protocol not currently configurable, defaults to http)
  * @param requiredOrg the name of some GitHub organization that the user must be a member of
  * @param app an Express/Connect app
  */
-function installAuth (host, requiredOrg, app) {
+function installAuth (requiredOrg, app) {
   // Passport session setup.
   //   To support persistent login sessions, Passport needs to be able to
   //   serialize users into and deserialize users out of the session.  Typically,
