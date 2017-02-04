@@ -52,7 +52,7 @@ function installAuth (host, requiredOrg, app) {
   var strategyConfig = {
     clientID: process.env["GITHUB_CLIENT_ID"],
     clientSecret: process.env["GITHUB_CLIENT_SECRET"],
-    callbackURL: host + "/auth/github/callback",
+    callbackURL: process.env["GITHUB_CALLBACK_URL"],
     scope: ["read:org", "read:user"]
   };
   passport.use(new GitHubStrategy(strategyConfig, function(accessToken, refreshToken, profile, done) {
