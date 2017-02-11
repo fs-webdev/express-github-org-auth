@@ -49,9 +49,9 @@ function installAuth (requiredOrgs, app) {
   //   credentials (in this case, an accessToken, refreshToken, and GitHub
   //   profile), and invoke a callback with a user object.
   var strategyConfig = {
-    clientID: process.env["GITHUB_CLIENT_ID"],
-    clientSecret: process.env["GITHUB_CLIENT_SECRET"],
-    callbackURL: process.env["GITHUB_CALLBACK_URL"],
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: process.env.GITHUB_CALLBACK_HOST + '/auth/github/callback',
     scope: ["read:org", "read:user"]
   };
   passport.use(new GitHubStrategy(strategyConfig, function(accessToken, refreshToken, profile, done) {
@@ -64,7 +64,7 @@ function installAuth (requiredOrgs, app) {
       port: 443,
       path: "/user/orgs",
       headers: {
-        "User-Agent": "joshuagross",
+        "User-Agent": "express-github-multi-org-auth",
         "Authorization": "token " + accessToken
       }
     }, function (res) {
@@ -76,7 +76,7 @@ function installAuth (requiredOrgs, app) {
         var requiredOrgFound = false;
         // See if any of the github-authorized orgs are a match for the orgs this app requires
         response.forEach(function (org) {
-          requiredOrgs.forEach((reqdOrg) => {
+          requiredOrgs.forEach(function (reqdOrg) {
             requiredOrgFound = requiredOrgFound || org['login'] === reqdOrg;
           });
         });
