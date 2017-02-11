@@ -21,10 +21,10 @@ var GitHubStrategy = require('passport-github').Strategy;
 var lazyUserDict = {};
 
 /**
- * @param requiredOrg the name of some GitHub organization that the user must be a member of
+ * @param {array} requiredOrgs - the name of some GitHub organization(s) that the user must be a member of
  * @param app an Express/Connect app
  */
-function installAuth (requiredOrg, app) {
+function installAuth (requiredOrgs, app) {
   // Passport session setup.
   //   To support persistent login sessions, Passport needs to be able to
   //   serialize users into and deserialize users out of the session.  Typically,
@@ -74,11 +74,14 @@ function installAuth (requiredOrg, app) {
       res.on('end', function () {
         var response = JSON.parse(rawResponse);
         var requiredOrgFound = false;
-        response.map(function (org) {
-          requiredOrgFound = requiredOrgFound || org['login'] === requiredOrg;
+        // See if any of the github-authorized orgs are a match for the orgs this app requires
+        response.forEach(function (org) {
+          requiredOrgs.forEach((reqdOrg) => {
+            requiredOrgFound = requiredOrgFound || org['login'] === reqdOrg;
+          });
         });
         if (!requiredOrgFound) {
-          return done(new Error('you must be a member of ' + requiredOrg));
+          return done(new Error('you must be a member of one of ' + requiredOrgs + ', which must be expressed as an array.'));
         }
         return done(null, profile);
       })
