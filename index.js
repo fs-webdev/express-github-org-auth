@@ -129,7 +129,7 @@ function installAuth (requiredOrgs, app) {
     if (req.isAuthenticated()) {
       return next();
     }
-    return res.redirect('/auth/github');
+    return res.redirect(process.env.GITHUB_CALLBACK_HOST + '/auth/github');
   }
   app.use(ensureAuthenticated);
 }
