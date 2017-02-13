@@ -54,6 +54,7 @@ function installAuth (requiredOrgs, app) {
     callbackURL: process.env.GITHUB_CALLBACK_HOST + '/auth/github/callback',
     scope: ["read:org", "read:user"]
   };
+  console.log('strategyConfig.callbackURL', strategyConfig.callbackURL);
   passport.use(new GitHubStrategy(strategyConfig, function(accessToken, refreshToken, profile, done) {
     // Get user's orgs list, ensure desired organization is in there.
     var https = require('https');
