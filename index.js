@@ -112,12 +112,16 @@ function installAuth (requiredOrgs, app) {
   app.get('/auth/github/callback',
     passport.authenticate('github', { failureRedirect: '/login' }),
     function(req, res) {
-      return res.redirect(process.env.GITHUB_CALLBACK_HOST + '/');
+      const redirPath = process.env.GITHUB_CALLBACK_HOST + '/';
+      console.log('redirPath:', redirPath);
+      return res.redirect(redirPath);
     });
 
   app.get('/logout', function(req, res){
     req.logout();
-    return res.redirect(process.env.GITHUB_CALLBACK_HOST + '/');
+    const redirPath = process.env.GITHUB_CALLBACK_HOST + '/';
+    console.log('redirPath:', redirPath)
+    return res.redirect(redirPath);
   });
 
   // Simple route middleware to ensure user is authenticated.
@@ -129,7 +133,9 @@ function installAuth (requiredOrgs, app) {
     if (req.isAuthenticated()) {
       return next();
     }
-    return res.redirect(process.env.GITHUB_CALLBACK_HOST + '/auth/github');
+    const redirPath = process.env.GITHUB_CALLBACK_HOST + '/auth/github';
+    console.log('redirPath:', redirPath);
+    return res.redirect(redirPath);
   }
   app.use(ensureAuthenticated);
 }
