@@ -118,9 +118,9 @@ function installAuth (requiredOrgs, app) {
     });
 
   app.get('/logout', function(req, res){
-    req.logout();
     const redirPath = process.env.GITHUB_CALLBACK_HOST + '/';
-    console.log('redirPath:', redirPath)
+    console.log('redirPath:', redirPath);
+    req.logout();
     return res.redirect(redirPath);
   });
 
@@ -130,11 +130,11 @@ function installAuth (requiredOrgs, app) {
   //   the request will proceed.  Otherwise, the user will be redirected to the
   //   login page.
   function ensureAuthenticated(req, res, next) {
+    const redirPath = process.env.GITHUB_CALLBACK_HOST + '/auth/github';
+    console.log('redirPath:', redirPath);
     if (req.isAuthenticated()) {
       return next();
     }
-    const redirPath = process.env.GITHUB_CALLBACK_HOST + '/auth/github';
-    console.log('redirPath:', redirPath);
     return res.redirect(redirPath);
   }
   app.use(ensureAuthenticated);
