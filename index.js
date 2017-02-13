@@ -112,12 +112,12 @@ function installAuth (requiredOrgs, app) {
   app.get('/auth/github/callback',
     passport.authenticate('github', { failureRedirect: '/login' }),
     function(req, res) {
-      return res.redirect('/');
+      return res.redirect(process.env.GITHUB_CALLBACK_HOST + '/');
     });
 
   app.get('/logout', function(req, res){
     req.logout();
-    return res.redirect('/');
+    return res.redirect(process.env.GITHUB_CALLBACK_HOST + '/');
   });
 
   // Simple route middleware to ensure user is authenticated.
