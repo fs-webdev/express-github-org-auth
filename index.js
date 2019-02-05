@@ -15,6 +15,7 @@
 
 var passport = require('passport');
 var GitHubStrategy = require('passport-github').Strategy;
+const debug = require('debug')('express-github-org-auth');
 
 // This is used to store user session data in-memory on the server. Causes all sessions to expire every time
 //  the server is restarted - which is fine since we're using oauth which should be seamless.
@@ -33,6 +34,7 @@ function installAuth (requiredOrgs, app, mountPath='') {
   //   have a database of user records, the complete GitHub profile is serialized
   //   and deserialized.
   passport.serializeUser(function(user, done) {
+    debug('user:' + user);
     lazyUserDict[user.username] = user;
     return done(null, user.username);
   });
@@ -54,6 +56,7 @@ function installAuth (requiredOrgs, app, mountPath='') {
     callbackURL: process.env.GITHUB_CALLBACK_HOST + mountPath + '/auth/github/callback',
     scope: ["read:org", "read:user"]
   };
+  debug('strategyConfig:' + strategyConfig);
   passport.use(new GitHubStrategy(strategyConfig, function(accessToken, refreshToken, profile, done) {
     // Get user's orgs list, ensure desired organization is in there.
     var https = require('https');
@@ -96,6 +99,7 @@ function installAuth (requiredOrgs, app, mountPath='') {
   //   request.  The first step in GitHub authentication will involve redirecting
   //   the user to github.com.  After authorization, GitHub will redirect the user
   //   back to this application at /auth/github/callback
+  debug('auth mount path:' + `${mountPath}/auth/github`);
   app.get(`${mountPath}/auth/github`,
     passport.authenticate('github'),
     function() {
@@ -108,15 +112,18 @@ function installAuth (requiredOrgs, app, mountPath='') {
   //   request.  If authentication fails, the user will be redirected back to the
   //   login page.  Otherwise, the primary route function function will be called,
   //   which, in this example, will redirect the user to the home page.
+  debug('auth callback path:' + `${mountPath}/auth/github/callback`)
   app.get(`${mountPath}/auth/github/callback`,
     passport.authenticate('github', { failureRedirect: `${mountPath}/login` }),
     function(req, res) {
       const redirPath = process.env.GITHUB_CALLBACK_HOST + mountPath + '/';
+      debug('redirPath:', redirPath)
       return res.redirect(redirPath);
     });
 
-  app.get(`${mountPath}/logout`, function(req, res){
-    const redirPath = process.env.GITHUB_CALLBACK_HOST + mountPath + '/';
+    app.get(`${mountPath}/logout`, function(req, res){
+      const redirPath = process.env.GITHUB_CALLBACK_HOST + mountPath + '/';
+      debug('redirPath:' + redirPath)
     req.logout();
     return res.redirect(redirPath);
   });
