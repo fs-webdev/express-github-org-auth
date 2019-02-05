@@ -15,7 +15,7 @@
 
 var passport = require('passport');
 var GitHubStrategy = require('passport-github').Strategy;
-const debug = require('debug')('express-github-org-auth');
+const debug = require('debug')('ghauth');
 
 // This is used to store user session data in-memory on the server. Causes all sessions to expire every time
 //  the server is restarted - which is fine since we're using oauth which should be seamless.
